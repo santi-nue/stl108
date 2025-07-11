@@ -34,8 +34,6 @@ jobs:
       - name: Download MIDI file
         run: wget -O mozart_sonata_545_1.mid "https://www.kunstderfuge.com/-/midi.asp?file=mozart/piano_sonata_545_1_(c)oguri.mid"
 
-      - name: Build neothesia-cli
-        run: cargo build --release -p neothesia-cli
 
       - name: Generate video from MIDI
         run: ./target/release/neothesia-cli mozart_sonata_545_1.mid
