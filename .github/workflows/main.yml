@@ -39,7 +39,7 @@ jobs:
         run: |
           pwd
           ls -l
-          ls -lR ./Neothesia/neothesia-cli
+          tree ./Neothesia/neothesia-cli
 
 
 
