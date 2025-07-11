@@ -16,10 +16,15 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Install FFmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
-
+      - name: Install FFmpeg dev libraries and pkg-config
+        run: sudo apt-get update && sudo apt-get install -y \
+             pkg-config \
+             libavcodec-dev \
+             libavformat-dev \
+             libavutil-dev \
+             libavfilter-dev \
+             libavdevice-dev
 
 
       - name: Clone Neothesia
