@@ -19,6 +19,19 @@ jobs:
       - name: Install FFmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
+
+
+
+      - name: Clone Neothesia
+        run: git clone https://github.com/PolyMeilex/Neothesia.git
+
+      - name: Build neothesia-cli
+        run: cargo build --release -p neothesia-cli
+        working-directory: ./Neothesia
+
+
+
+
       - name: Download MIDI file
         run: wget -O mozart_sonata_545_1.mid "https://www.kunstderfuge.com/-/midi.asp?file=mozart/piano_sonata_545_1_(c)oguri.mid"
 
