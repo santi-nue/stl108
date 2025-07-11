@@ -26,7 +26,7 @@ jobs:
 
       - name: Build neothesia-cli
         run: cargo build --release -p neothesia-cli
-        working-directory: ./Neothesia
+        working-directory: ./Neothesia/neothesia-cli
 
 
 
