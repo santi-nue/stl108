@@ -1,0 +1,39 @@
+name: midi2wav
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-generate-video:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install FluidSynth
+        run: sudo apt-get update && sudo apt-get install -y fluidsynth
+
+      - name: Clone Neothesia
+        run: git clone https://github.com/PolyMeilex/Neothesia.git
+
+      - name: Download MIDI file
+        run: wget -O mozart_sonata_545_1.mid "https://www.kunstderfuge.com/-/midi.asp?file=mozart/piano_sonata_545_1_(c)oguri.mid"
+
+      - name: Convert MIDI to WAV
+        run: fluidsynth -ni ./Neothesia/default.sf2 mozart_sonata_545_1.mid -F output.wav
+
+      - name: Show current directory and files
+        run: |
+          pwd
+          ls -l
+          # tree ./Neothesia/target/release
+
+
+      - name: Generate video from MIDI
+        run: ./Neothesia/target/release/neothesia-cli mozart_sonata_545_1.mid
+
+      - name: Upload video artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: neothesia-audio
+          path: output.wav
