@@ -18,7 +18,7 @@ jobs:
 
 
       - name: Install FFmpeg dev libraries and pkg-config
-        run: sudo apt-get update && sudo apt-get install -y pkg-config libavcodec-dev libavformat-dev libavutil-dev libavfilter-dev libavdevice-dev libgl1-mesa-dri libgl1-mesa-glx mesa-utils
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libavcodec-dev libavformat-dev libavutil-dev libavfilter-dev libavdevice-dev libgl1 libglx-mesa0 libgl1-mesa-dri mesa-utils
       - name: Clone Neothesia
         run: git clone https://github.com/PolyMeilex/Neothesia.git
 
