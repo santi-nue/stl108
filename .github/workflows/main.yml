@@ -61,7 +61,7 @@ jobs:
         run: ./Neothesia/target/release/neothesia-cli mozart_sonata_545_1.mid
 
       - name: join audio
-        run: ffmpeg -i ./out/video.mp4 -i output.wav -c:v copy -c:a libmp3lame -q:a 2 -map 0:v:0 -map 1:a:0 outputvid.mp4
+        run: ffmpeg -i ./out/video.mp4 -itsoffset 3 -i output.wav -c:v copy -c:a libmp3lame -q:a 2 -map 0:v:0 -map 1:a:0 -shortest outputvid.mp4
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
