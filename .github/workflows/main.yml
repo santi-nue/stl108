@@ -1,0 +1,35 @@
+name: Generate Neothesia Video
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-generate-video:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Download MIDI file
+        run: wget -O mozart_sonata_545_1.mid "https://www.kunstderfuge.com/-/midi.asp?file=mozart/piano_sonata_545_1_(c)oguri.mid"
+
+      - name: Build neothesia-cli
+        run: cargo build --release -p neothesia-cli
+
+      - name: Generate video from MIDI
+        run: ./target/release/neothesia-cli mozart_sonata_545_1.mid
+
+      - name: Upload video artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: neothesia-video
+          path: ./out/
