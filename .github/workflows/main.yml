@@ -35,8 +35,15 @@ jobs:
         run: wget -O mozart_sonata_545_1.mid "https://www.kunstderfuge.com/-/midi.asp?file=mozart/piano_sonata_545_1_(c)oguri.mid"
 
 
+      - name: Show current directory and files
+        run: |
+          pwd
+          ls -l
+
+
+
       - name: Generate video from MIDI
-        run: ./target/release/neothesia-cli mozart_sonata_545_1.mid
+        run: ./neothesia-cli mozart_sonata_545_1.mid
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
