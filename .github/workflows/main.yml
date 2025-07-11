@@ -39,11 +39,12 @@ jobs:
         run: |
           pwd
           ls -l
+          ls -lR ./Neothesia/neothesia-cli
 
 
 
       - name: Generate video from MIDI
-        run: ./neothesia-cli mozart_sonata_545_1.mid
+        run: ./Neothesia/neothesia-cli/target/release/neothesia-cli ../mozart_sonata_545_1.mid
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
