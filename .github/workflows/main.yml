@@ -1,7 +1,13 @@
 name: Generate Neothesia Video
 
 on:
+  
   workflow_dispatch:
+    inputs:
+      input_path:
+        description: 'Path to input mif file in the repo'
+        required: true
+        default: 'VirtuosicAMinorCycle.mid'
 
 jobs:
   build-and-generate-video:
@@ -45,12 +51,13 @@ jobs:
         run: cargo build --release -p neothesia-cli
         working-directory: ./Neothesia/neothesia-cli
 
-      - name: Download MIDI file
-        run: wget -O mozart_sonata_545_1.mid "https://www.kunstderfuge.com/-/midi.asp?file=mozart/piano_sonata_545_1_(c)oguri.mid"
+    #  - name: Download MIDI file
+    #    run: wget -O mozart_sonata_545_1.mid "https://www.kunstderfuge.com/-/midi.asp?file=mozart/piano_sonata_545_1_(c)oguri.mid"
 
       - name: Convert MIDI to WAV
-        run: fluidsynth -ni ./Neothesia/default.sf2 mozart_sonata_545_1.mid -F output.wav
-
+        run: fluidsynth -ni ./Neothesia/default.sf2 ${{ github.event.inputs.input_path }} -F output.wav
+        # run: fluidsynth -ni ./Neothesia/default.sf2 mozart_sonata_545_1.mid -F output.wav
+        
       - name: Show current directory and files
         run: |
           pwd
@@ -58,10 +65,10 @@ jobs:
           tree ./Neothesia/target/release
 
       - name: Generate video from MIDI
-        run: ./Neothesia/target/release/neothesia-cli mozart_sonata_545_1.mid
+        run: ./Neothesia/target/release/neothesia-cli ${{ github.event.inputs.input_path }} 
 
       - name: join audio
-        run: ffmpeg -i ./out/video.mp4 -itsoffset 3 -i output.wav -c:v copy -c:a libmp3lame -q:a 2 -map 0:v:0 -map 1:a:0 -shortest outputvid.mp4
+        run: ffmpeg -i ./out/video.mp4 -itsoffset 3 -i output.wav -c:v copy -c:a libmp3lame -q:a 2 -map 0:v:0 -map 1:a:0 -shortest -af "volume=6dB" outputvid.mp4
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
