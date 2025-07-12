@@ -1,0 +1,77 @@
+name: Generate Neothesia Video from url
+
+on:
+  
+  workflow_dispatch:
+    inputs:
+      input_path:
+        description: 'Path to input mif file in the repo'
+        required: true
+        default: 'VirtuosicAMinorCycle.mid'
+
+jobs:
+  build-and-generate-video:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Load cached FFmpeg
+        id: cache-ffmpeg
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/bin/ffmpeg
+            /usr/local/bin/ffprobe
+          key: ${{ runner.os }}-ffmpeg-5.1.1
+
+      - name: Install FFmpeg if not cached
+        if: steps.cache-ffmpeg.outputs.cache-hit != 'true'
+        run: |
+          VERSION=5.1.1
+          RELEASE_NAME=ffmpeg-${VERSION}-amd64-static
+          wget --timeout=8 --tries=30 https://www.johnvansickle.com/ffmpeg/old-releases/${RELEASE_NAME}.tar.xz
+          tar -xf ${RELEASE_NAME}.tar.xz
+          mv ${RELEASE_NAME}/ffmpeg ${RELEASE_NAME}/ffprobe /usr/local/bin/
+          rm -rf ${RELEASE_NAME}
+
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Install FFmpeg dev libraries and pkg-config
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libavcodec-dev libavformat-dev libavutil-dev libavfilter-dev libavdevice-dev libgl1 libglx-mesa0 libgl1-mesa-dri mesa-utils fluidsynth      
+      - name: Clone Neothesia
+        run: git clone https://github.com/PolyMeilex/Neothesia.git
+
+      - name: Build neothesia-cli
+        run: cargo build --release -p neothesia-cli
+        working-directory: ./Neothesia/neothesia-cli
+
+      - name: Download MIDI file
+        run: wget -O input.mid "${{ github.event.inputs.input_path }}" 
+
+      - name: Convert MIDI to WAV
+        run: fluidsynth -ni ./Neothesia/default.sf2 input.mid -F output.wav
+        # run: fluidsynth -ni ./Neothesia/default.sf2 mozart_sonata_545_1.mid -F output.wav
+        
+      - name: Show current directory and files
+        run: |
+          pwd
+          ls -l
+          tree ./Neothesia/target/release
+
+      - name: Generate video from MIDI
+        run: ./Neothesia/target/release/neothesia-cli input.mid
+
+      - name: join audio
+        run: ffmpeg -i ./out/video.mp4 -itsoffset 3 -i output.wav -c:v copy -c:a libmp3lame -q:a 2 -map 0:v:0 -map 1:a:0 -shortest -af "volume=9dB" outputvid.mp4
+
+      - name: Upload video artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: neothesia-video
+          path: outputvid.mp4
