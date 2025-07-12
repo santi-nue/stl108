@@ -11,16 +11,25 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install FluidSynth
-        run: sudo apt-get update && sudo apt-get install -y fluidsynth
+        run: sudo apt-get update && sudo apt-get install -y fluidsynth midisox
 
       - name: Clone Neothesia
         run: git clone https://github.com/PolyMeilex/Neothesia.git
 
-      - name: Download MIDI file
-        run: wget -O mozart_sonata_545_1.mid "https://www.kunstderfuge.com/-/midi.asp?file=mozart/piano_sonata_545_1_(c)oguri.mid"
+     # - name: Download MIDI file
+     #   run: wget -O mozart_sonata_545_1.mid "https://www.kunstderfuge.com/-/midi.asp?file=mozart/piano_sonata_545_1_(c)oguri.mid"
+
+      - name: Concatenate MIDI files
+        run: |
+          mkdir -p output
+          # Concatenate all .mid files in the midis/ folder, adjust path as needed
+          midisox -s midis/*.mid output/concatenated.mid
+
+
+
 
       - name: Convert MIDI to WAV
-        run: fluidsynth -ni ./Neothesia/default.sf2 mozart_sonata_545_1.mid -F output.wav
+        run: fluidsynth -ni ./Neothesia/default.sf2 output/concatenated.mid -F output.wav
 
       - name: Show current directory and files
         run: |
