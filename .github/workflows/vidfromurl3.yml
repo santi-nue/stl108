@@ -8,7 +8,11 @@ on:
         description: 'Path to input mid file in the repo'
         required: true
         default: 'VirtuosicAMinorCycle.mid'
-
+      gain:
+        description: 'Enter gain value (e.g., 12dB, 20dB)'
+        required: true
+        default: '9dB'
+        type: string
         
 jobs:
   build-and-generate-video:
@@ -60,7 +64,7 @@ jobs:
 
       - name: Raise volume
         # run: ffmpeg -i video.mp4 -af "loudnorm=I=-14:TP=-1:LRA=11" -c:v copy -c:a aac output.mp4
-        run: ffmpeg -i video.mp4 -af "volume=6dB" -c:v copy -c:a aac output.mp4
+        run: ffmpeg -i video.mp4 -af "volume=${{ github.event.inputs.gain }}" -c:v copy -c:a aac output.mp4
   
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
