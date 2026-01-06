@@ -1,4 +1,4 @@
-name: Generate Neothesia Video from url no ffmpeg
+name: Generate Neothesia Video from url raise volume
 
 on:
   
@@ -53,16 +53,16 @@ jobs:
         working-directory: ./Neothesia/neothesia-cli
 
       - name: Download MIDI file
-        run: wget -O input.mid "${{ github.event.inputs.input_path }}" 
-
-      
+        run: wget -O input.mid "${{ github.event.inputs.input_path }}"      
       
       - name: Generate video from MIDI
         run: ./Neothesia/target/release/neothesia-cli input.mid video.mp4 --soundfont ./Neothesia/default.sf2
 
+      - name: Raise volume
+        run: ffmpeg -i video.mp4 -af "loudnorm=I=-14:TP=-1:LRA=11" -c:v copy -c:a aac output.mp4
       
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
         with:
           name: neothesia-video
-          path: video.mp4
+          path: output.mp4
