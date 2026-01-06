@@ -73,7 +73,8 @@ jobs:
         run: ./Neothesia/target/release/neothesia-cli input.mid video.mp4
 
       - name: join audio
-        run: ffmpeg -i video.mp4 -itsoffset 3 -i output.wav -c:v copy -c:a libmp3lame -q:a 2 -map 0:v:0 -map 1:a:0 -shortest -af "volume=${{ github.event.inputs.gain }}" outputvid.mp4
+        # run: ffmpeg -i video.mp4 -itsoffset 3 -i output.wav -c:v copy -c:a libmp3lame -q:a 2 -map 0:v:0 -map 1:a:0 -shortest -af "volume=${{ github.event.inputs.gain }}" outputvid.mp4
+        run: ffmpeg -i video.mp4 -i output.wav -c:v copy -c:a libmp3lame -q:a 2 -map 0:v:0 -map 1:a:0 -shortest -af "volume=${{ github.event.inputs.gain }}" outputvid.mp4
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
