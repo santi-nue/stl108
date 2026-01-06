@@ -59,8 +59,9 @@ jobs:
         run: ./Neothesia/target/release/neothesia-cli input.mid video.mp4 --soundfont ./Neothesia/default.sf2
 
       - name: Raise volume
-        run: ffmpeg -i video.mp4 -af "loudnorm=I=-14:TP=-1:LRA=11" -c:v copy -c:a aac output.mp4
-      
+        # run: ffmpeg -i video.mp4 -af "loudnorm=I=-14:TP=-1:LRA=11" -c:v copy -c:a aac output.mp4
+        run: ffmpeg -i video.mp4 -af "volume=6dB" -c:v copy -c:a aac output.mp4
+  
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
         with:
